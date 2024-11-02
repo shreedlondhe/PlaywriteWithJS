@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","14238","Motor Test","chromium","Fri Nov 01 15:10:14 IST 2024","passed","Fri Nov 01 15:10:28 IST 2024","","loginTest.spec.js","",""
+"","13378","Health Test","chromium","Fri Nov 01 15:10:00 IST 2024","passed","Fri Nov 01 15:10:14 IST 2024","","loginTest.spec.js","",""
+"","30119","Life Test","chromium","Fri Nov 01 15:09:29 IST 2024","broken","Fri Nov 01 15:09:59 IST 2024","","loginTest.spec.js","",""

@@ -1,0 +1,7 @@
+[2024-11-01T10:07:21.798Z] [INFO] Site opened https://app.mintpro.in/signup
+[2024-11-01T10:07:21.861Z] [INFO] Filled valaue 6999912345
+[2024-11-01T10:07:21.958Z] [INFO] Clicked on Continie
+[2024-11-01T10:07:22.250Z] [INFO] Filled OTP 1234
+[2024-11-01T10:07:22.299Z] [INFO] Clicked on verifying OTP
+[2024-11-01T10:07:26.567Z] [INFO] Clcked on sell
+[2024-11-01T10:07:28.095Z] [INFO] Clicked on health
