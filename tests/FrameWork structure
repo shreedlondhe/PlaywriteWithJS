@@ -1,0 +1,213 @@
+playwright-framework/
+├── tests/
+│   ├── login.spec.js
+│   ├── search.spec.js
+│   └── homepage.spec.js
+├── pages/
+│   ├── loginPage.js
+│   ├── searchPage.js
+│   └── homePage.js
+├── utils/
+│   ├── config.js
+│   ├── logger.js
+├── config/
+│   └── playwright.config.js
+├── package.json
+└── package-lock.json
+
+
+*** utils/config.js ***
+module.exports = {
+  facebookUrl: 'https://www.facebook.com/login',
+  email: 'your-email@example.com', // Replace securely
+  password: 'your-password',
+  searchName: 'Mark Zuckerberg'
+};
+
+
+*** utils/logger.js ***
+const log = (msg) => {
+  console.log(`[${new Date().toISOString()}] ${msg}`);
+};
+module.exports = { log };
+
+
+*** pages/loginPage.js ***
+const { facebookUrl, email, password } = require('../utils/config');
+const { log } = require('../utils/logger');
+
+class LoginPage {
+  constructor(page) {
+    this.page = page;
+    this.emailInput = 'input[name="email"]';
+    this.passwordInput = 'input[name="pass"]';
+    this.loginBtn = 'button[name="login"]';
+  }
+
+  async login() {
+    log('Navigating to login page');
+    await this.page.goto(facebookUrl);
+    await this.page.fill(this.emailInput, email);
+    await this.page.fill(this.passwordInput, password);
+    await this.page.click(this.loginBtn);
+    await this.page.waitForTimeout(5000); // buffer to load home
+  }
+}
+
+module.exports = LoginPage;
+
+
+*** pages/searchPage.js ***
+const { log } = require('../utils/logger');
+const { searchName } = require('../utils/config');
+
+class SearchPage {
+  constructor(page) {
+    this.page = page;
+    this.searchBox = 'input[aria-label="Search Facebook"]';
+    this.resultText = `text="${searchName}"`;
+  }
+
+  async searchPerson() {
+    log(`Searching for ${searchName}`);
+    await this.page.click(this.searchBox);
+    await this.page.fill(this.searchBox, searchName);
+    await this.page.keyboard.press('Enter');
+    await this.page.waitForSelector(this.resultText);
+  }
+}
+
+module.exports = SearchPage;
+
+
+*** pages/homePage.js ***
+const { log } = require('../utils/logger');
+
+class HomePage {
+  constructor(page) {
+    this.page = page;
+    this.logo = 'a[aria-label="Facebook"]';
+    this.newsFeed = '[aria-label="News Feed"]';
+  }
+
+  async goToHome() {
+    log('Navigating to homepage via logo');
+    await this.page.click(this.logo);
+    await this.page.waitForSelector(this.newsFeed);
+  }
+}
+
+module.exports = HomePage;
+
+
+*** tests/login.spec.js ***
+const { chromium } = require('playwright');
+const LoginPage = require('../pages/loginPage');
+const { log } = require('../utils/logger');
+
+describe('Facebook Login', () => {
+  let browser, page, loginPage;
+
+  beforeAll(async () => {
+    browser = await chromium.launch({ headless: false });
+    page = await browser.newPage();
+    loginPage = new LoginPage(page);
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it('should login to Facebook', async () => {
+    await loginPage.login();
+    log('Login test passed');
+  });
+});
+
+
+*** tests/search.spec.js ***
+const { chromium } = require('playwright');
+const LoginPage = require('../pages/loginPage');
+const SearchPage = require('../pages/searchPage');
+const { log } = require('../utils/logger');
+
+describe('Facebook Search', () => {
+  let browser, page, loginPage, searchPage;
+
+  beforeAll(async () => {
+    browser = await chromium.launch({ headless: false });
+    page = await browser.newPage();
+    loginPage = new LoginPage(page);
+    searchPage = new SearchPage(page);
+    await loginPage.login();
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it('should search for a specific person', async () => {
+    await searchPage.searchPerson();
+    log('Search test passed');
+  });
+});
+
+
+*** tests/homepage.spec.js ***
+const { chromium } = require('playwright');
+const LoginPage = require('../pages/loginPage');
+const HomePage = require('../pages/homePage');
+const { log } = require('../utils/logger');
+
+describe('Facebook Home Navigation', () => {
+  let browser, page, loginPage, homePage;
+
+  beforeAll(async () => {
+    browser = await chromium.launch({ headless: false });
+    page = await browser.newPage();
+    loginPage = new LoginPage(page);
+    homePage = new HomePage(page);
+    await loginPage.login();
+  });
+
+  afterAll(async () => {
+    await browser.close();
+  });
+
+  it('should go to homepage', async () => {
+    await homePage.goToHome();
+    log('Homepage navigation test passed');
+  });
+});
+
+
+*** package.json ***
+{
+  "name": "playwright-facebook-login",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "npx playwright test"
+  },
+  "dependencies": {
+    "playwright": "^1.19.0"
+  }
+}
+
+
+*** playwright.config.js ***
+// playwright.config.js
+module.exports = {
+  timeout: 30000, // global timeout for all tests
+  use: {
+    headless: false,  // Set to true for headless execution
+    browserName: 'chromium',  // You can change to 'firefox' or 'webkit'
+    screenshot: 'only-on-failure',  // Capture screenshot on test failure
+    video: 'on',  // Record videos for failed tests
+  },
+  projects: [
+    {
+      name: 'facebook-login',
+      testDir: './tests',
+    },
+  ],
+};
