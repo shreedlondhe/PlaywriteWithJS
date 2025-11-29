@@ -211,3 +211,61 @@ module.exports = {
     },
   ],
 };
+******************************************************************************************************************************
+allure reporting
+
+✅ Step 1 — Open your package.json
+
+Add these 3 scripts inside "scripts":
+
+✔ Correct package.json snippet
+{
+  "scripts": {
+    "clean:allure": "rm -rf allure-results && rm -rf allure-report",
+    "test:allure": "npm run clean:allure && npx playwright test --reporter=line,allure-playwright",
+    "report": "npx allure generate allure-results --clean && npx allure open"
+  }
+}
+
+⚠️ If you are on Windows CMD or PowerShell,
+
+rm -rf will NOT work.
+
+You must use Windows commands:
+
+{
+  "scripts": {
+    "clean:allure": "rmdir /s /q allure-results & rmdir /s /q allure-report",
+    "test:allure": "npm run clean:allure && npx playwright test --reporter=line,allure-playwright",
+    "report": "npx allure generate allure-results --clean && npx allure open"
+  }
+}
+
+
+✔ Works for Windows
+✔ Solves your error
+
+🔍 Step 2 — Verify scripts added correctly
+
+Run:
+
+npm run
+
+
+It should show:
+
+clean:allure
+test:allure
+report
+
+
+If you see them → success.
+
+🚀 Step 3 — Run the Allure test now
+npm run test:allure
+
+
+After tests finish:
+
+npm run report
+
